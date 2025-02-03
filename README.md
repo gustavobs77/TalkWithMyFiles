@@ -59,16 +59,8 @@ Este projeto implementa um chatbot baseado em **RAG (Retrieval-Augmented Generat
 6. O modelo de linguagem selecionado gera uma resposta baseada nesses trechos.
 7. A resposta é exibida junto com as fontes extraídas do documento.
 
-## 📌 Possíveis Melhorias
-- Suporte a mais tipos de arquivos (ex: `.txt`, `.docx`).
-- Ajuste fino nos **modelos de embedding** para melhorar a recuperação de informações.
-- Personalização da interface no Streamlit.
 
-## 🤝 Contribuição
-Sinta-se à vontade para abrir issues, enviar PRs ou sugerir melhorias!
 
----
 
-🔗 **Contato**: [Seu Nome](https://linkedin.com/in/seu-perfil) | ✉️ Email: seuemail@example.com
 
 
