@@ -32,9 +32,9 @@ load_dotenv()
 st.set_page_config(page_title="Talking with my files", page_icon="📚")
 st.title("Talking with my files")
 
-model_class = "hf_hub" # @param ["hf_hub", "openai", "ollama"]
+model_class = "hf_hub" # É possivel mudar para: ["hf_hub","ollama"]
 
-## Provedores de modelos
+## Provedores de modelos. Cada função representa um dos modelos possíveis
 def model_hf_hub(model="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.1):
   llm = HuggingFaceHub(
       repo_id=model,
@@ -42,7 +42,7 @@ def model_hf_hub(model="meta-llama/Meta-Llama-3-8B-Instruct", temperature=0.1):
           "temperature": temperature,
           "return_full_text": False,
           "max_new_tokens": 512,
-          #"stop": ["<|eot_id|>"],
+          
           # demais parâmetros que desejar
       }
   )
@@ -57,7 +57,7 @@ def model_ollama(model="phi3", temperature=0.1):
     )
     return llm
 
-# Indexação e recuperação
+# Indexação e recuperação d
 def config_retriever(uploads):
    # Carregar documentos
    docs = []
@@ -76,7 +76,7 @@ def config_retriever(uploads):
    # Embedding
    embeddings = HuggingFaceEmbeddings(model_name = "BAAI/bge-m3")
 
-   # Armazenamento
+   # Armazenamento eindexação com FAISS
    vectorstore = FAISS.from_documents(splits, embeddings)
    vectorstore.save_local('vectorstore/db_faiss')
 
@@ -85,7 +85,7 @@ def config_retriever(uploads):
                                         search_kwargs={'k': 3, 'fetch_k': 4})
    return retriever
 
-# Configuração da chain
+# Configuração da chain 
 def config_rag_chain(model_class, retriever):
     # Carregamento da LLM
     if model_class == "hf_hub":
@@ -102,7 +102,8 @@ def config_rag_chain(model_class, retriever):
 
     # Prompt de contextualização
     # consulta -> retriever
-    # (consulta, histórico do chat) -> LLM -> consulta reformulada -> retriever
+    
+    # Pipeline: (consulta, histórico do chat) -> LLM -> consulta reformulada -> retriever
     context_q_system_prompt = "Given the following chat history and the follow-up question which might reference context in the chat history, formulate a standalone question which can be understood without the chat history. Do NOT answer the question, just reformulate it if needed and otherwise return it as is."
     context_q_system_prompt = token_s + context_q_system_prompt
     context_q_user_prompt = "Question: {input}" + token_e
@@ -119,7 +120,7 @@ def config_rag_chain(model_class, retriever):
                                                              retriever=retriever,
                                                              prompt=context_q_prompt)
     
-    # Prompt para perguntas e respostas (Q&A)
+    # COnfigurando o prompt
     qa_prompt_template = """Você é um assistente virtual prestativo e está respondendo perguntas gerais. 
     Use os seguintes pedaços de contexto recuperado para responder à pergunta. 
     Se você não sabe a resposta, apenas diga que não sabe. Mantenha a resposta concisa. 
@@ -136,7 +137,7 @@ def config_rag_chain(model_class, retriever):
     return rag_chain
 
 
-# Criação de painel lateral na interface
+# Criação de painel lateral na interface visual (Streamlit)
 uploads = st.sidebar.file_uploader(
    label = "Attatch", type=["pdf"],
    accept_multiple_files=True
